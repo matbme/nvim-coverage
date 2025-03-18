@@ -70,10 +70,18 @@ M.load = function(callback)
     -- obtains fine grained data
     local packages = assert(jacoco.report.package, "not able to read jacoco.report.package")
     assert(type(packages) == "table")
+	if #packages == 0 then
+		packages = { packages }
+	end
+
     for _, pack in ipairs(packages) do
         local dir = dir_prefix .. pack._attr.name
 
         -- classes
+		if #pack.class == 0 then
+			pack.class = { pack.class }
+		end
+
         for _, class in ipairs(pack.class) do
             local filename = Path:new(dir .. "/" .. class._attr.sourcefilename).filename -- with .java
 
@@ -96,6 +104,10 @@ M.load = function(callback)
 
 
         end
+
+		if #pack.sourcefile == 0 then
+			pack.sourcefile = { pack.sourcefile }
+		end
 
         for _, src_file in ipairs(pack.sourcefile) do
             local lines = src_file.line
